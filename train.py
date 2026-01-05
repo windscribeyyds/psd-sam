@@ -1,4 +1,6 @@
 import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+
 import argparse
 import numpy as np
 import torch
@@ -32,13 +34,13 @@ warnings.filterwarnings('ignore')
 def get_args_parser():
     parser = argparse.ArgumentParser('PA-SAM', add_help=False)
 
-    parser.add_argument("--output", type=str, required=True, 
+    parser.add_argument("--output", type=str, default="work_dirs/pa_sam_l", 
                         help="Path to the directory where masks and checkpoints will be output")
     parser.add_argument("--logfile", type=str, default=None, 
                         help="Path to save the log file")
     parser.add_argument("--model-type", type=str, default="vit_l", 
                         help="The type of model to load, in ['vit_h', 'vit_l', 'vit_b']")
-    parser.add_argument("--checkpoint", type=str, required=True, 
+    parser.add_argument("--checkpoint", type=str, default="./pretrained_checkpoint/sam_vit_l_0b3195.pth", 
                         help="The path to the SAM checkpoint to use for mask generation.")
     parser.add_argument("--device", type=str, default="cuda", 
                         help="The device to run generation on.")
