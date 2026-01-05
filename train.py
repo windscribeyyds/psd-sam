@@ -71,6 +71,13 @@ def get_args_parser():
     return parser.parse_args()
 
 def main(net, train_datasets, valid_datasets, args):
+    # 设置环境变量以支持分布式训练
+    # 【核心修改】手动设置环境变量，伪装成分布式启动
+    os.environ['WORLD_SIZE'] = '1'
+    os.environ['RANK'] = '0'
+    os.environ['LOCAL_RANK'] = '0'
+    os.environ['MASTER_ADDR'] = '127.0.0.1'
+    os.environ['MASTER_PORT'] = '29500'
 
     misc.init_distributed_mode(args)
     print('world size: {}'.format(args.world_size))
