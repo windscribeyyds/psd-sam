@@ -1,2 +1,3 @@
-/pretrained_checkpoint*
+/pretrained_checkpoint/*
 /data/*
+/.idea/*

@@ -72,12 +72,25 @@ def get_args_parser():
 
 def main(net, train_datasets, valid_datasets, args):
     # 设置环境变量以支持分布式训练
-    # 【核心修改】手动设置环境变量，伪装成分布式启动
+    # 1. 强制设置环境变量，确保进入分布式模式
     os.environ['WORLD_SIZE'] = '1'
     os.environ['RANK'] = '0'
     os.environ['LOCAL_RANK'] = '0'
-    os.environ['MASTER_ADDR'] = '127.0.0.1'
-    os.environ['MASTER_PORT'] = '29500'
+
+    # 2. 使用文件初始化替代 TCP 端口初始化
+    # 获取当前目录下名为 'dist_init_file' 的文件的绝对路径
+    init_file = os.path.abspath("dist_init_file")
+    # 如果文件已存在，先删除，防止读取旧数据卡死
+    if os.path.exists(init_file):
+        try:
+            os.remove(init_file)
+        except OSError:
+            pass
+
+    # 将路径转换为 PyTorch 识别的 URL 格式 (Windows 下必须替换反斜杠)
+    args.dist_url = f"file:///{init_file.replace(os.sep, '/')}"
+
+    print(f"Using init_method: {args.dist_url}")
 
     misc.init_distributed_mode(args)
     print('world size: {}'.format(args.world_size))
@@ -486,8 +499,9 @@ if __name__ == "__main__":
                  "im_ext": ".jpg",
                  "gt_ext": ".png"}
 
-    train_datasets = [dataset_dis, dataset_thin, dataset_fss, dataset_duts, dataset_duts_te, dataset_ecssd, dataset_msra]
-    valid_datasets = [dataset_dis_val, dataset_coift_val, dataset_hrsod_val, dataset_thin_val] 
+    # 删除了多余 dataset
+    train_datasets = [dataset_dis]
+    valid_datasets = [dataset_dis_val]
  
     args = get_args_parser()
     net = MaskDecoderPA(args.model_type) 
