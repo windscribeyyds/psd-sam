@@ -1,3 +1,4 @@
-/pretrained_checkpoint/*
-/data/*
-/.idea/*
+/pretrained_checkpoint/
+/data/
+/.idea/
+/work_dirs/
