@@ -5,6 +5,7 @@ import torch
 import random
 import logging
 import sys
+import time
 
 # 导入项目模块
 from segment_anything_training import sam_model_registry
@@ -22,8 +23,12 @@ def get_default_args():
 
     # ================= 配置区域 (在这里修改默认参数) =================
 
+    # 生成时间戳并创建唯一输出目录
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    default_output_dir = f"work_dirs/pa_sam_l_eval_{timestamp}"
+
     # 1. 输出目录
-    parser.add_argument("--output", type=str, default="work_dirs/pa_sam_l_eval",
+    parser.add_argument("--output", type=str, default=default_output_dir,
                         help="输出结果和日志的目录")
 
     # 2. 模型类型 (vit_l, vit_b, vit_h)
@@ -120,8 +125,18 @@ def main():
                        "im_ext": ".jpg",
                        "gt_ext": ".png"}
 
+    # my dataset
+    dataset_my_val = {"name": "psd",
+                      "im_dir": "../RGBLdatasetM/processed_dataset/val/im",
+                      "gt_dir": "../RGBLdatasetM/processed_dataset/val/gt",
+                      "im_ext": ".jpg",
+                      "gt_ext": ".png"}
+
+    # 修改列表：my 测试数据集
+    valid_datasets = [dataset_my_val]
+
     # 修改列表：只保留你想跑的数据集
-    valid_datasets = [dataset_dis_val]
+    # valid_datasets = [dataset_dis_val]
     # valid_datasets = [dataset_dis_val, dataset_hrsod_val, dataset_thin_val]
     # 如果你有 COIFT 数据，可以把 dataset_coift_val 加回去
 

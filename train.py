@@ -34,8 +34,13 @@ warnings.filterwarnings('ignore')
 def get_args_parser():
     parser = argparse.ArgumentParser('PA-SAM', add_help=False)
 
-    parser.add_argument("--output", type=str, default="work_dirs/pa_sam_l", 
+    # 生成时间戳并创建唯一输出目录
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    default_output_dir = f"work_dirs/psd_sam_l_{timestamp}"
+
+    parser.add_argument("--output", type=str, default=default_output_dir,
                         help="Path to the directory where masks and checkpoints will be output")
+
     parser.add_argument("--logfile", type=str, default=None, 
                         help="Path to save the log file")
     parser.add_argument("--model-type", type=str, default="vit_l", 
@@ -499,9 +504,25 @@ if __name__ == "__main__":
                  "im_ext": ".jpg",
                  "gt_ext": ".png"}
 
+    # my dataset
+    dataset_my = {"name": "psd",
+                    "im_dir": "../RGBLdatasetM/processed_dataset/train/im",
+                    "gt_dir": "../RGBLdatasetM/processed_dataset/train/gt",
+                    "im_ext": ".jpg",
+                    "gt_ext": ".png"}
+    dataset_my_val = {"name": "psd",
+                  "im_dir": "../RGBLdatasetM/processed_dataset/val/im",
+                  "gt_dir": "../RGBLdatasetM/processed_dataset/val/gt",
+                  "im_ext": ".jpg",
+                  "gt_ext": ".png"}
+
     # 删除了多余 dataset
-    train_datasets = [dataset_dis]
-    valid_datasets = [dataset_dis_val]
+    # train_datasets = [dataset_dis]
+    # valid_datasets = [dataset_dis_val]
+
+    # my dataset
+    train_datasets = [dataset_my]
+    valid_datasets = [dataset_my_val]
  
     args = get_args_parser()
     net = MaskDecoderPA(args.model_type) 
